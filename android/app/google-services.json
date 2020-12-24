@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "43337353562",
+    "project_id": "authenphone-e3426",
+    "storage_bucket": "authenphone-e3426.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:43337353562:android:eb7253ffccef6e8f7c8b63",
+        "android_client_info": {
+          "package_name": "com.example.authen_phone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "43337353562-sv2pcsea8ctdv6807anc5ev74629drji.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.authen_phone",
+            "certificate_hash": "48683a5563c4d89082ca9cb6cb270d20ca185c12"
+          }
+        },
+        {
+          "client_id": "43337353562-ivgjk4q4n9t2lhbuj8cjk9740mcigceh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKgHbtoZWxj8O6sO0T93JDaHIhGQjHWiM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "43337353562-ivgjk4q4n9t2lhbuj8cjk9740mcigceh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
