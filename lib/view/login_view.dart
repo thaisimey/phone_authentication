@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:authen_phone/repo/sign_in_phone.dart';
 import 'package:authen_phone/view/home_view.dart';
 import 'package:authen_phone/view_model/login_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -28,13 +29,15 @@ class _LoginViewState extends State<LoginView> {
   Timer _timer;
   int _start = 30;
   bool _validate = false;
-  final textFieldFocusNode = FocusNode();
+  String _verificationId;
+  LogIn logIn = LogIn();
+
 
   void startTimer() {
 
     _timer = new Timer.periodic(
       Duration(seconds: 1), (Timer timer) {
-        print('time ${timer.tick}');
+        // print('time ${timer.tick}');
         if (_start == 0) {
           setState(() {
             timer.cancel();
@@ -69,7 +72,7 @@ class _LoginViewState extends State<LoginView> {
             print("Error");
           }
 
-          // print("verificationCompleted ${credential.smsCode} ${credential.token} ${credential.verificationId}");
+          print("verificationCompleted ${credential.smsCode} ${credential.token} ${credential.verificationId}");
           // UserCredential result = await _auth.signInWithCredential(credential);
           // print("resutl ${result.user.displayName}");
           // print("Phone number automatically verified and user signed in: ${_auth.currentUser.uid}");
@@ -82,52 +85,53 @@ class _LoginViewState extends State<LoginView> {
         codeSent: (String verificationId, int resendToken) {
           print("On code sent : $verificationId $resendToken");
 
-          showDialog(
-              context: context,
-              barrierDismissible: false,
-              builder: (context) => AlertDialog(
-                title: Text("Enter SMS Code"),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    TextField(
-                      controller: _codeController,
-
-                    ),
-
-                  ],
-                ),
-                actions: <Widget>[
-                  FlatButton(
-                    child: Text("Done"),
-                    textColor: Colors.white,
-                    color: Colors.redAccent,
-                    onPressed: () async {
-                      try {
-                        String smsCode = '';
-                        smsCode = _codeController.text.trim();
-
-                        print("Sms code $smsCode");
-                        AuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsCode);
-                        UserCredential result = await _auth.signInWithCredential(credential);
-                        User user = result.user;
-                        print("user aaaaaaaaaaaaaaaa $user");
-
-                        if(user != null){
-                          Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => HomeView(user)
-                          ));
-                        }else{
-                          print("Error");
-                        }
-                      } catch(e) {
-                        print("error confirm code");
-                      }
-                    },
-                  )
-                ],
-              )
-          );
+          _verificationId = verificationId;
+          // showDialog(
+          //     context: context,
+          //     barrierDismissible: false,
+          //     builder: (context) => AlertDialog(
+          //       title: Text("Enter SMS Code"),
+          //       content: Column(
+          //         mainAxisSize: MainAxisSize.min,
+          //         children: <Widget>[
+          //           TextField(
+          //             controller: _codeController,
+          //
+          //           ),
+          //
+          //         ],
+          //       ),
+          //       actions: <Widget>[
+          //         FlatButton(
+          //           child: Text("Done"),
+          //           textColor: Colors.white,
+          //           color: Colors.redAccent,
+          //           onPressed: () async {
+          //             try {
+          //               String smsCode = '';
+          //               smsCode = _codeController.text.trim();
+          //
+          //               print("Sms code $smsCode");
+          //               AuthCredential credential = PhoneAuthProvider.credential(verificationId: verificationId, smsCode: smsCode);
+          //               UserCredential result = await _auth.signInWithCredential(credential);
+          //               User user = result.user;
+          //               print("user aaaaaaaaaaaaaaaa $user");
+          //
+          //               if(user != null){
+          //                 Navigator.push(context, MaterialPageRoute(
+          //                     builder: (context) => HomeView(user)
+          //                 ));
+          //               }else{
+          //                 print("Error");
+          //               }
+          //             } catch(e) {
+          //               print("error confirm code");
+          //             }
+          //           },
+          //         )
+          //       ],
+          //     )
+          // );
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           print("codeAutoRetrievalTimeout $verificationId");
@@ -153,6 +157,7 @@ class _LoginViewState extends State<LoginView> {
     }
     return Future.value(user);
   }
+
 
 
 
@@ -196,7 +201,7 @@ class _LoginViewState extends State<LoginView> {
                     color: Colors.orangeAccent,
                     child: Text("Send"),
                     onPressed: () {
-                      _registerUser("+85561281701", context);
+                      // _registerUser("+85561281701", context);
                       WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
                         Provider.of<LoginViewModel>(context, listen: false).checkLogin(false);
                       });
@@ -248,7 +253,7 @@ class _LoginViewState extends State<LoginView> {
                         keyboardType: TextInputType.number,
                       ),
                       FlatButton(
-                        onPressed: () {
+                        onPressed: () async {
                           setState(() {
                             _text.text.isEmpty ? _validate = true : _validate = false;
                             isStart = true;
@@ -260,13 +265,11 @@ class _LoginViewState extends State<LoginView> {
                             isSendCode = true;
                           });
 
+                          // _registerUser("+855${_text.text}", context);
 
-                          _registerUser("+855${_text.text}", context);
-                          print(_text.text);
-                          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
-                            Provider.of<LoginViewModel>(context, listen: false).checkLogin(false);
+                          logIn.verifyPhoneNumber("+855${_text.text}").then((value) => {
+                            print("result phone authen ${value}")
                           });
-
 
                         },
                         textTheme: ButtonTextTheme.primary,
@@ -283,6 +286,7 @@ class _LoginViewState extends State<LoginView> {
 
 
                 isSendCode ? TextField(
+                  controller: _codeController,
                   decoration: InputDecoration(
                       labelText: "Code"
                   ),
@@ -291,7 +295,22 @@ class _LoginViewState extends State<LoginView> {
                 RaisedButton(
                     color: Colors.orangeAccent,
                     child: Text("Send"),
-                    onPressed: () {
+                    onPressed: () async {
+                      String smsCode = '';
+                      smsCode = _codeController.text.trim();
+
+                      print("Sms code $smsCode");
+                      AuthCredential credential = PhoneAuthProvider.credential(verificationId: _verificationId, smsCode: smsCode);
+                      UserCredential result = await _auth.signInWithCredential(credential);
+                      User user = result.user;
+
+                      if(user != null) {
+                        Navigator.push(context, MaterialPageRoute(
+                        builder: (context) => HomeView(user)));
+                      } else {
+                        print("error");
+                      }
+
 
                     }),
 

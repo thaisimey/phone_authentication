@@ -1,4 +1,5 @@
 import 'package:authen_phone/view/login_view.dart';
+import 'package:authen_phone/view/website_view.dart';
 import 'package:authen_phone/view_model/login_view_model.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: LoginView(),
+      home: WebSiteView(),
     );
   }
 }
