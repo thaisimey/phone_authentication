@@ -8,7 +8,7 @@
 
     <application
         android:usesCleartextTraffic="true"
-        android:name="io.flutter.app.FlutterApplication"
+        android:name=".Application"
         android:label="authen_phone"
         android:icon="@mipmap/ic_launcher">
         <activity
